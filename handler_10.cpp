@@ -114,16 +114,22 @@ cv::Mat image_to_mat(image img)
     int w=0;
     int channels;
     const char *config_filename = "config/config.yaml";
-    const char * net1="config/yolo4_e_cig.rt";
-    const char * net3="config/yolo4_jwellery_watches.rt";
-    const char * net4="config/yolo4_cigar_cutter.rt"; 
-    const char * net5="config/yolo4x_lighters.rt"; 
-    const char * net6="config/yolo4x_sharp_object.rt";
-    int classes1 , classes2 , classes3 , classes4 , classes5,classes6,len;
+    const char * net1="config/battery_e_cigratte.rt";
+    const char * net2="config/cigar_cigratte.rt";
+    const char * net3="config/jwellery_watches.rt"; 
+    const char * net4="config/battery_e_cigratte.rt";
+    const char * net5="config/cigar_cigratte.rt";
+    const char * net6="config/jwellery_watches.rt";
+    const char * net7="config/battery_e_cigratte.rt";
+    const char * net8="config/cigar_cigratte.rt";
+    const char * net9="config/jwellery_watches.rt";
+    const char * net10="config/battery_e_cigratte.rt";
+
+    int classes1 , classes2 , classes3 , classes4 , classes5,len;
     char * img_data;
 
     string ustring;
-    float conf_thresh1 , conf_thresh2 , conf_thresh3 , conf_thresh4 , conf_thresh5,conf_thresh6;
+    float conf_thresh1 , conf_thresh2 , conf_thresh3 , conf_thresh4 , conf_thresh5;
     tk::dnn::Yolo3Detection yolo1;
     tk::dnn::DetectionNN *detNN1;
     tk::dnn::Yolo3Detection yolo2;
@@ -136,6 +142,14 @@ cv::Mat image_to_mat(image img)
     tk::dnn::DetectionNN *detNN5;
     tk::dnn::Yolo3Detection yolo6;
     tk::dnn::DetectionNN *detNN6;
+    tk::dnn::Yolo3Detection yolo7;
+    tk::dnn::DetectionNN *detNN7;
+    tk::dnn::Yolo3Detection yolo8;
+    tk::dnn::DetectionNN *detNN8;
+    tk::dnn::Yolo3Detection yolo9;
+    tk::dnn::DetectionNN *detNN9;
+    tk::dnn::Yolo3Detection yolo10;
+    tk::dnn::DetectionNN *detNN10;
     unsigned char * sockData;
     
     std::vector<cv::Mat> batch_frames;
@@ -146,6 +160,10 @@ cv::Mat image_to_mat(image img)
     std::vector<std::string> classesNames4;
     std::vector<std::string> classesNames5;
     std::vector<std::string> classesNames6;
+    std::vector<std::string> classesNames7;
+    std::vector<std::string> classesNames8;
+    std::vector<std::string> classesNames9;
+     std::vector<std::string> classesNames10;
     std::vector<tk::dnn::Frame> images;
     std::vector<tk::dnn::box> detected_bbox1;
     std::vector<tk::dnn::box> detected_bbox2;
@@ -153,6 +171,10 @@ cv::Mat image_to_mat(image img)
     std::vector<tk::dnn::box> detected_bbox4;
     std::vector<tk::dnn::box> detected_bbox5;
     std::vector<tk::dnn::box> detected_bbox6;
+    std::vector<tk::dnn::box> detected_bbox7;
+    std::vector<tk::dnn::box> detected_bbox8;
+    std::vector<tk::dnn::box> detected_bbox9;
+    std::vector<tk::dnn::box> detected_bbox10;
     //read parametersi
     handler::handler(utility::string_t url):m_listener(url)
 {
@@ -165,25 +187,42 @@ string name_from_path(string path)
     return path.substr(path.find_last_of("/\\")+1);
 }
     void handler::init_bag(){tk::dnn::readmAPParams(config_filename, classes1,conf_thresh1, classes2,conf_thresh2
-    , classes3,conf_thresh3, classes4,conf_thresh4,classes5,conf_thresh5,classes6,conf_thresh6);
+    , classes3,conf_thresh3, classes4,conf_thresh4,classes5,conf_thresh5);
+
     detNN1 = &yolo1;
     detNN1->init(net1, classes1, 1, conf_thresh1);
     classesNames1=detNN1-> classesNames;
-    /*detNN2 = &yolo2;
+    detNN2 = &yolo2;
     detNN2->init(net2, classes2, 1, conf_thresh2);
-    classesNames2=detNN2-> classesNames;*/
+    classesNames2=detNN2-> classesNames;
+    detNN3 = &yolo3;
+    detNN3->init(net3, classes3, 1, conf_thresh3);
+    classesNames3=detNN3-> classesNames;
     detNN3 = &yolo3;
     detNN3->init(net3, classes3, 1, conf_thresh3);
     classesNames3=detNN3-> classesNames;
     detNN4 = &yolo4;
-    detNN4->init(net4, classes4, 1, conf_thresh4);
+    detNN4->init(net4, classes1, 1, conf_thresh1);
     classesNames4=detNN4-> classesNames;
-    detNN5= &yolo5;
-    detNN5->init(net5, classes5, 1, conf_thresh5);
+    detNN5 = &yolo5;
+    detNN5->init(net5, classes2, 1, conf_thresh2);
     classesNames5=detNN5-> classesNames;
-    detNN6= &yolo6;
-    detNN6->init(net6, classes6, 1, conf_thresh6);
+    detNN6 = &yolo6;
+    detNN6->init(net6, classes3, 1, conf_thresh3);
     classesNames6=detNN6-> classesNames;
+    detNN7 = &yolo7;
+    detNN7->init(net7, classes1, 1, conf_thresh1);
+    classesNames7=detNN7-> classesNames;
+    detNN8 = &yolo8;
+    detNN8->init(net8, classes2, 1, conf_thresh2);
+    classesNames8=detNN8-> classesNames;
+    detNN9 = &yolo9;
+    detNN9->init(net9, classes3, 1, conf_thresh3);
+    classesNames9=detNN9-> classesNames;
+    detNN10 = &yolo10;
+    detNN10->init(net10, classes1, 1, conf_thresh1);
+    classesNames10=detNN10-> classesNames;
+
     return;}
 
 
@@ -237,7 +276,7 @@ try {    //printSize(ustring);
         detection["prob"] = json::value::number(d1.prob);
         jsonArray.push_back(detection);
 }
-    /*detected_bbox2.clear();
+     detected_bbox2.clear();
     batch_dnn_input.clear();
     batch_dnn_input.push_back(frame.clone());
     detNN2->update(batch_dnn_input,1);
@@ -254,8 +293,8 @@ try {    //printSize(ustring);
         detection["h"] = json::value::number(d2.h);
         detection["prob"] = json::value::number(d2.prob);
         jsonArray.push_back(detection);
-}*/
-    detected_bbox3.clear();
+}
+     detected_bbox3.clear();
     batch_dnn_input.clear();
     batch_dnn_input.push_back(frame.clone());
     detNN3->update(batch_dnn_input,1);
@@ -270,9 +309,8 @@ try {    //printSize(ustring);
         detection["h"] = json::value::number(d3.h);
         detection["prob"] = json::value::number(d3.prob);
         jsonArray.push_back(detection);
-}
-
-    detected_bbox4.clear();
+}       
+     detected_bbox4.clear();
     batch_dnn_input.clear();
     batch_dnn_input.push_back(frame.clone());
     detNN4->update(batch_dnn_input,1);
@@ -287,9 +325,9 @@ try {    //printSize(ustring);
         detection["h"] = json::value::number(d4.h);
         detection["prob"] = json::value::number(d4.prob);
         jsonArray.push_back(detection);
-}
+}       
 
-    detected_bbox5.clear();
+         detected_bbox5.clear();
     batch_dnn_input.clear();
     batch_dnn_input.push_back(frame.clone());
     detNN5->update(batch_dnn_input,1);
@@ -304,8 +342,8 @@ try {    //printSize(ustring);
         detection["h"] = json::value::number(d5.h);
         detection["prob"] = json::value::number(d5.prob);
         jsonArray.push_back(detection);
-}
-    detected_bbox6.clear();
+}       
+         detected_bbox6.clear();
     batch_dnn_input.clear();
     batch_dnn_input.push_back(frame.clone());
     detNN6->update(batch_dnn_input,1);
@@ -320,7 +358,73 @@ try {    //printSize(ustring);
         detection["h"] = json::value::number(d6.h);
         detection["prob"] = json::value::number(d6.prob);
         jsonArray.push_back(detection);
-}
+}       
+         detected_bbox7.clear();
+    batch_dnn_input.clear();
+    batch_dnn_input.push_back(frame.clone());
+    detNN7->update(batch_dnn_input,1);
+    detected_bbox7 = detNN7->detected;
+    for(auto d7:detected_bbox7){	
+        BOOST_LOG_TRIVIAL(info)<< "model-7:"<<" "<<d7.cl << " "<< d7.prob << " "<< d7.x << " "<< d7.y << " "<< d7.w << " "<< d7.h <<"\n";
+	    json::value detection;
+        detection["label"] = json::value::string(classesNames7[d7.cl]);
+        detection["x"] = json::value::number(d7.x);
+        detection["y"] = json::value::number(d7.y);
+        detection["w"] = json::value::number(d7.w);
+        detection["h"] = json::value::number(d7.h);
+        detection["prob"] = json::value::number(d7.prob);
+        jsonArray.push_back(detection);
+}       
+         detected_bbox8.clear();
+    batch_dnn_input.clear();
+    batch_dnn_input.push_back(frame.clone());
+    detNN8->update(batch_dnn_input,1);
+    detected_bbox8 = detNN8->detected;
+    for(auto d8:detected_bbox8){	
+        BOOST_LOG_TRIVIAL(info)<< "model-8:"<<" "<<d8.cl << " "<< d8.prob << " "<< d8.x << " "<< d8.y << " "<< d8.w << " "<< d8.h <<"\n";
+	    json::value detection;
+        detection["label"] = json::value::string(classesNames8[d8.cl]);
+        detection["x"] = json::value::number(d8.x);
+        detection["y"] = json::value::number(d8.y);
+        detection["w"] = json::value::number(d8.w);
+        detection["h"] = json::value::number(d8.h);
+        detection["prob"] = json::value::number(d8.prob);
+        jsonArray.push_back(detection);
+}       
+         detected_bbox9.clear();
+    batch_dnn_input.clear();
+    batch_dnn_input.push_back(frame.clone());
+    detNN9->update(batch_dnn_input,1);
+    detected_bbox9 = detNN9->detected;
+    for(auto d9:detected_bbox9){	
+        BOOST_LOG_TRIVIAL(info)<< "model-9:"<<" "<<d9.cl << " "<< d9.prob << " "<< d9.x << " "<< d9.y << " "<< d9.w << " "<< d9.h <<"\n";
+	    json::value detection;
+        detection["label"] = json::value::string(classesNames9[d9.cl]);
+        detection["x"] = json::value::number(d9.x);
+        detection["y"] = json::value::number(d9.y);
+        detection["w"] = json::value::number(d9.w);
+        detection["h"] = json::value::number(d9.h);
+        detection["prob"] = json::value::number(d9.prob);
+        jsonArray.push_back(detection);
+}       
+         detected_bbox10.clear();
+    batch_dnn_input.clear();
+    batch_dnn_input.push_back(frame.clone());
+    detNN10->update(batch_dnn_input,1);
+    detected_bbox10 = detNN10->detected;
+    for(auto d10:detected_bbox10){	
+        BOOST_LOG_TRIVIAL(info)<< "model-10:"<<" "<<d10.cl << " "<< d10.prob << " "<< d10.x << " "<< d10.y << " "<< d10.w << " "<< d10.h <<"\n";
+	    json::value detection;
+        detection["label"] = json::value::string(classesNames10[d10.cl]);
+        detection["x"] = json::value::number(d10.x);
+        detection["y"] = json::value::number(d10.y);
+        detection["w"] = json::value::number(d10.w);
+        detection["h"] = json::value::number(d10.h);
+        detection["prob"] = json::value::number(d10.prob);
+        jsonArray.push_back(detection);
+}       
+        
+
             response["detections"] = json::value::array(jsonArray);   //JSON Response
 //        free(jsonArray);
         request.reply(status_codes::OK,response.serialize());

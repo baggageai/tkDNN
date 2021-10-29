@@ -1,4 +1,4 @@
-FROM mohitkhubele95/tkdnn
+FROM tkdnn:build
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
@@ -26,6 +26,11 @@ RUN mkdir files
 COPY --chown=baggageai:baggageai . files/
 #RUN aws s3 cp s3://dim-bai-s3-dev-developer-space/smiths_29_objects/libBaggageAI.so files/
 
+
+RUN mkdir /home/baggageai/files/build
+WORKDIR /home/baggageai/files/build
+RUN cmake /home/baggageai/files
+RUN make -j16 
 WORKDIR /home/baggageai/files
 RUN chmod 777 run.sh
 ENTRYPOINT ["./run.sh"]

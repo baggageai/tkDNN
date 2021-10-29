@@ -1,5 +1,6 @@
 #include "evaluation.h"
 #include <fstream>
+
 namespace tk { namespace dnn {
 
 void Frame::print() const{
@@ -20,6 +21,7 @@ void readmAPParams( const char* config_filename, int& classes1,float& conf_thres
     , int& classes3,float& conf_thresh3
     , int& classes4,float& conf_thresh4
     , int& classes5,float& conf_thresh5
+    , int& classes6,float& conf_thresh6
                     ) {
     YAML::Node config   = YAML::LoadFile(config_filename);
     classes1     = config["classes1"].as<int>();
@@ -32,6 +34,8 @@ void readmAPParams( const char* config_filename, int& classes1,float& conf_thres
     conf_thresh4 = config["conf_thresh4"].as<float>();
     classes5    = config["classes5"].as<int>();
     conf_thresh5 = config["conf_thresh5"].as<float>();
+    classes6    = config["classes6"].as<int>();
+    conf_thresh6 = config["conf_thresh6"].as<float>();
 }
 
 /* Credits to https://github.com/AlexeyAB/darknet/blob/master/src/detector.c*/

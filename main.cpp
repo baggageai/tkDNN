@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "stdafx.h"
 #include "handler.h"
 using namespace std;

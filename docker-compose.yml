@@ -1,0 +1,43 @@
+version: '3.3'
+services:
+  # baggageai-server:
+  #   image: baggageai:server
+  #   runtime: nvidia
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - BAI_logs:/home/baggageai/log
+  #   restart: on-failure
+  #   networks:
+  #     - baggageai-network
+  #   volumes:
+  #       - /home/mmrc/Documents/mohit/27:/local
+  #   deploy:
+  #     replicas: 1       #Keep replicas 1 only for GPU
+  #     restart_policy:
+  #       condition: on-failure
+  #       max_attempts: 3
+  baggageai-server-cig:
+    image: baggageai:server-cig
+    runtime: nvidia
+    ports:
+      - 8081:8080
+    volumes:
+      - BAI_logs:/home/baggageai/log
+    restart: on-failure
+    networks:
+      - baggageai-network
+    volumes:
+        - /home/mmrc/Documents/mohit/27:/local
+    deploy:
+      replicas: 1       #Keep replicas 1 only for GPU
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+networks:
+  baggageai-network:
+    external: false
+    name: baggageai-network   
+volumes:
+  BAI_logs:
+    external: true

@@ -18,6 +18,8 @@ struct Frame
     std::string iFilename;
     std::vector<BoundingBox> gt;
     std::vector<BoundingBox> det;
+    int width;
+    int height;
 
     void print() const;
 };
@@ -36,7 +38,8 @@ void readmAPParams( const char* config_filename, int& classes1,float& conf_thres
     , int& classes3,float& conf_thresh3
     , int& classes4,float& conf_thresh4
     , int& classes5,float& conf_thresh5
-                    );
+    , int& classes6,float& conf_thresh6
+                   );
 
 /**
  * This method computes the mean Average Precision for a set of detections and 
@@ -116,5 +119,4 @@ void printJsonCOCOFormat(std::ofstream *out_file, const std::string image_path, 
 
 }}
 #endif /*EVALUATION_H*/
-
 
